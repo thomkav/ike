@@ -25,11 +25,11 @@ endef
 # Python version - get from .python-version file
 PYTHON_VERSION := $(shell cat .python-version)
 
-python3:
+python3: # Install Python3
 	$(call echo_wrapper, bash scripts/install_python.sh $(PYTHON_VERSION))
 
-.venv:
-	$(call echo_wrapper, python3 -m venv .venv)
+.venv: python3 # Create a virtual environment
+	$(call echo_wrapper, bash scripts/create_venv.sh)
 
 # --------------------
 # Mock-Database commands
@@ -51,9 +51,13 @@ db-mock-docker: db-teardown-docker # Mock the database using docker
 install-coreutils:
 	$(call echo_wrapper, bash scripts/install_coreutils.sh)
 
+.PHONY: install-poetry
+install-poetry: # Install Poetry
+	$(call echo_wrapper, bash scripts/install_poetry.sh)
+
 .PHONY: install-dependencies
-install-dependencies: .venv requirements.txt requirements-dev.txt # Install Python dependencies 
-	$(call echo_wrapper, bash scripts/install_dependencies.sh)
+install-dependencies: .venv install-poetry pyproject.toml # Install Python dependencies 
+	$(call echo_wrapper, bash scripts/install_dependencies_poetry.sh)
 
 .PHONY: install-git-hooks
 install-git-hooks: # Install git hooks
@@ -128,6 +132,22 @@ remigrate-schema-local: clean-local-db db-migrate-schema
 	$(call echo_wrapper, echo "Schema remigrated successfully")
 
 # --------------------
+# App commands
+# --------------------
+
+.PHONY: stop-streamlit
+stop-streamlit: # Stop the Streamlit UI
+	$(call echo_wrapper, bash scripts/stop_streamlit_ui.sh)
+
+.PHONY: run-streamlit
+run-streamlit: stop-streamlit # Run the Streamlit UI
+	$(call echo_wrapper, bash scripts/run_streamlit_ui.sh)
+
+.PHONY: run-all
+run-all: run-streamlit # Run all services
+	$(call echo_wrapper, echo "All services are running")
+
+# --------------------
 # Deployment
 # --------------------
 
@@ -155,9 +175,12 @@ clean-test:
 	$(call echo_wrapper, rm -f .coverage)
 	$(call echo_wrapper, rm -rf htmlcov/)
 
+.PHONY: clean-venv
+clean-venv:
+	$(call echo_wrapper, rm -rf .venv/)
+
 .PHONY: clean
 clean: clean-pyc clean-test clean-logs # Clean the project
-	$(call echo_wrapper, rm -rf .venv)
 
 # --------------------
 # Help

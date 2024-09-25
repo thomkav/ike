@@ -7,14 +7,6 @@ repos:
       - id: isort
         exclude: ".venv/"
 
-  # Black
-  - repo: https://github.com/psf/black
-    rev: "23.9.1"
-    hooks:
-      - id: black
-        language_version: python3.9
-        exclude: ".venv/"
-
   # Flake8
   - repo: https://github.com/PyCQA/flake8
     rev: "3.7.9"
@@ -49,36 +41,6 @@ repos:
       - id: checkmake
         exclude: ".venv/"
 
-  # SQLFluff
-  - repo: https://github.com/sqlfluff/sqlfluff
-    rev: "2.3.5"
-    hooks:
-
-      # Linting
-      - id: sqlfluff-lint
-        name: sqlfluff-lint
-        # Set `--processes 0` to use maximum parallelism
-        entry: sqlfluff lint
-        language: python
-        description: "Lints sql files with `SQLFluff`"
-        types: [sql]
-        require_serial: true
-        additional_dependencies: []
-
-      # Fixing
-      - id: sqlfluff-fix
-        name: sqlfluff-fix
-        # Set a couple of default flags:
-        #  - `--force` to disable confirmation
-        #  - `--show-lint-violations` shows issues to not require running `sqlfluff lint`
-        #  - `--processes 0` to use maximum parallelism
-        # By default, this hook applies all rules.
-        entry: sqlfluff fix --force --show-lint-violations
-        language: python
-        description: "Fixes sql lint errors with `SQLFluff`"
-        types: [sql]
-        require_serial: true
-        additional_dependencies: []
 
   # Local hooks
   - repo: local

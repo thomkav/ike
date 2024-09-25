@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Check if .venv directory exists
 if [ ! -d ".venv" ]; then
@@ -11,7 +12,11 @@ echo "Shell Script - Activating virtual environment ..."
 . .venv/bin/activate
 echo "Shell Script - Done activating virtual environment."
 
-echo "Shell Script - Installing poetry ..."
+echo "Shell Script - Locking dependencies using poetry ..."
+poetry lock
+echo "Shell Script - Done locking dependencies."
+
+echo "Shell Script - Installing dependencies using poetry ..."
 poetry config virtualenvs.in-project true
-poetry install --no-interaction --no-ansi --quiet
-echo "Shell Script - Done installing poetry."
+poetry install --no-interaction --no-ansi --no-root --without dev
+echo "Shell Script - Done installing dependencies."

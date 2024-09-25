@@ -14,7 +14,7 @@ echo "Shell Script - Installing poetry ..."
 . .venv/bin/activate
 
 # Read poetry version and install
-POETRY_VERSION=$(cat ./poetry.version)
+POETRY_VERSION=$(cat ./.poetry-version)
 pip install poetry=="$POETRY_VERSION" --quiet
 
 # Log completion
